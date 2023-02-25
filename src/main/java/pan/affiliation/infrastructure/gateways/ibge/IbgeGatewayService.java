@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import pan.affiliation.domain.modules.localization.entities.State;
 import pan.affiliation.domain.modules.localization.queries.GetCountryStatesQuery;
 import pan.affiliation.infrastructure.gateways.ibge.contracts.StateResponse;
-import pan.affiliation.infrastructure.gateways.shared.Http;
+import pan.affiliation.infrastructure.shared.http.abstractions.HttpService;
+import pan.affiliation.infrastructure.shared.http.abstractions.HttpServiceFactory;
 import pan.affiliation.shared.environment.PropertiesReader;
 import pan.affiliation.shared.exceptions.QueryException;
 
@@ -14,13 +15,12 @@ import java.util.List;
 
 @Component
 public class IbgeGatewayService implements GetCountryStatesQuery {
-    private final Http http;
+    private final HttpService http;
     private static final String getStatesPath = "estados";
 
     @Autowired
-    public IbgeGatewayService(Http http, PropertiesReader propertiesReader) {
-        this.http = http;
-        this.http.setBaseUrl(propertiesReader.get("ibge.baseurl"));
+    public IbgeGatewayService(HttpServiceFactory factory, PropertiesReader propertiesReader) {
+        this.http = factory.create(propertiesReader.get("ibge.baseurl"));
     }
 
     @Override

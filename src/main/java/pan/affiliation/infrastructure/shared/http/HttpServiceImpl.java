@@ -1,7 +1,7 @@
-package pan.affiliation.infrastructure.gateways.shared;
+package pan.affiliation.infrastructure.shared.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
+import pan.affiliation.infrastructure.shared.http.abstractions.HttpService;
 import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationStatus;
 
@@ -13,18 +13,13 @@ import java.net.http.HttpResponse;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
-@Service
-public class HttpImpl implements Http {
+public class HttpServiceImpl implements HttpService {
     private final HttpClient http;
-    private String baseUrl;
+    private final String baseUrl;
 
-    public HttpImpl() {
-        this.http = HttpClient.newHttpClient();
-    }
-
-    @Override
-    public void setBaseUrl(String baseUrl) {
+    public HttpServiceImpl(String baseUrl) {
         this.baseUrl = baseUrl;
+        this.http = HttpClient.newHttpClient();
     }
 
     @Override
