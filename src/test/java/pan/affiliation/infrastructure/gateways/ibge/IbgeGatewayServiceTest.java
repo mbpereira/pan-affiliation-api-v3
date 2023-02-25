@@ -49,10 +49,10 @@ public class IbgeGatewayServiceTest {
                 statusCode,
                 factory -> new IbgeGatewayService(factory, getPropertiesReader(baseUrl)));
 
-        var states = gatewayService.getCitiesFromState(51);
+        var cities = gatewayService.getCitiesFromState(51);
 
-        assertEquals("Cuiabá", states.get(0).getName());
-        assertEquals(11, states.get(0).getId());
+        assertEquals("Cuiabá", cities.get(0).getName());
+        assertEquals(11, cities.get(0).getId());
     }
 
     private static<T> T getGatewayService(
