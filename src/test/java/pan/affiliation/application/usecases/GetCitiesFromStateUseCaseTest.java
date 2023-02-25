@@ -35,8 +35,24 @@ public class GetCitiesFromStateUseCaseTest {
 
     @SneakyThrows
     @Test
+    public void getCitiesFromState_shouldReturnNullIfProvidedStateDoesNotExists() {
+        var queryMock = mock(GetCitiesFromStatesQueryHandler.class);
+        var validationContextMock = mock(ValidationContext.class);
+        when(queryMock.getCitiesFromState(51)).thenReturn(null);
+        var getCitiesFromStateUseCase = new GetCitiesFromStateUseCase(queryMock, validationContextMock);
+
+        var result = getCitiesFromStateUseCase.getCitiesFromState(51);
+
+        assertNull(result);
+        verify(validationContextMock).setStatus(ValidationStatus.NOT_FOUND);
+        verify(queryMock, times(1)).getCitiesFromState(51);
+    }
+
+    @SneakyThrows
+    @Test
     public void getCitiesFromState_shouldReturnExpectedCities() {
         var cities = new ArrayList<City>();
+        cities.add(new City(10, "Sinop"));
         cities.add(new City(11, "Cuiabá"));
         var queryMock = mock(GetCitiesFromStatesQueryHandler.class);
         var validationContextMock = mock(ValidationContext.class);
@@ -45,7 +61,8 @@ public class GetCitiesFromStateUseCaseTest {
 
         var result = getCitiesFromStateUseCase.getCitiesFromState(51);
 
-        assertEquals(cities, result);
+        assertEquals(result.get(0).getName(), "Cuiabá");
+        assertEquals(result.get(1).getName(), "Sinop");
         verify(validationContextMock, never()).setStatus(any(ValidationStatus.class));
         verify(queryMock, times(1)).getCitiesFromState(51);
     }

@@ -8,7 +8,9 @@ import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationContext;
 import pan.affiliation.shared.validation.ValidationStatus;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GetCitiesFromStateUseCase {
@@ -23,7 +25,17 @@ public class GetCitiesFromStateUseCase {
 
     public List<City> getCitiesFromState(int stateId) {
         try {
-            return this.query.getCitiesFromState(stateId);
+            var cities = this.query.getCitiesFromState(stateId);
+
+            if (cities == null || cities.size() == 0) {
+                this.validationContext.setStatus(ValidationStatus.NOT_FOUND);
+                return null;
+            }
+
+            return cities
+                    .stream()
+                    .sorted(Comparator.comparing(City::getName))
+                    .collect(Collectors.toList());
         } catch (QueryException e) {
             this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
             this.validationContext.addNotification(e.getErrorCode(), e.getMessage());
