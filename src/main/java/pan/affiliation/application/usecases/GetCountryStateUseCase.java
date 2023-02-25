@@ -1,7 +1,6 @@
 package pan.affiliation.application.usecases;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.localization.entities.State;
 import pan.affiliation.domain.modules.localization.queries.GetCountryStatesQuery;
@@ -12,7 +11,6 @@ import pan.affiliation.shared.validation.ValidationStatus;
 import java.util.List;
 
 @Service
-@Scope()
 public class GetCountryStateUseCase {
     private final GetCountryStatesQuery query;
     private final ValidationContext validationContext;
