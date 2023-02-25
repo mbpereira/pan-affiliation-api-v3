@@ -9,6 +9,7 @@ import pan.affiliation.infrastructure.gateways.shared.Http;
 import pan.affiliation.shared.environment.PropertiesReader;
 import pan.affiliation.shared.exceptions.QueryException;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -24,12 +25,8 @@ public class IbgeGatewayService implements GetCountryStatesQuery {
 
     @Override
     public List<State> getCountryStates() throws QueryException {
-        try {
-            @SuppressWarnings("unchecked")
-            var states = (List<StateResponse>) this.http.get(getStatesPath, List.class);
-            return states.stream().map(s -> new State(s.id(), s.name(), s.acronym())).toList();
-        } catch (ClassCastException e) {
-            return null;
-        }
+        var states = this.http.get(getStatesPath, StateResponse[].class);
+        return Arrays.stream(states)
+                .map(s -> new State(s.getId(), s.getName(), s.getAcronym())).toList();
     }
 }

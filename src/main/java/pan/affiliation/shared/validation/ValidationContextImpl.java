@@ -2,13 +2,14 @@ package pan.affiliation.shared.validation;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Component
-@Scope("request")
+@RequestScope
 public class ValidationContextImpl implements ValidationContext {
     private final List<Error> errors;
     private ValidationStatus validationStatus;

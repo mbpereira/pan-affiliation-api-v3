@@ -1,4 +1,17 @@
 package pan.affiliation.domain.modules.localization.entities;
 
-public record State(int id, String acronym, String name) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.context.annotation.Scope;
+
+@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+public class State {
+    private int id;
+    private String acronym;
+    private String name;
 }

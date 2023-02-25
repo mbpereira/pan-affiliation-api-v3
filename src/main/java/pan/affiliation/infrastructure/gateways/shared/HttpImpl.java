@@ -1,6 +1,6 @@
 package pan.affiliation.infrastructure.gateways.shared;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationStatus;
@@ -10,6 +10,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 @Service
 public class HttpImpl implements Http {
@@ -26,7 +28,7 @@ public class HttpImpl implements Http {
     }
 
     @Override
-    public <T> T get(String path, Class<T> responseClass) throws QueryException {
+    public <T> T get(String path, Class<T> clazz) throws QueryException {
         var url = String.format("%s/%s", baseUrl, path);
         var request = HttpRequest
                 .newBuilder(URI.create(url))
@@ -34,7 +36,9 @@ public class HttpImpl implements Http {
         try {
             var response = this.http.send(request, HttpResponse.BodyHandlers.ofString());
             ensureSuccessStatusCode(response);
-            return new Gson().fromJson(response.body(), responseClass);
+            var mapper = new ObjectMapper()
+                    .disable(FAIL_ON_UNKNOWN_PROPERTIES);
+            return mapper.readValue(response.body(), clazz);
         } catch (IOException | InterruptedException e) {
             throw new QueryException(ValidationStatus.INTEGRATION_ERROR.toString(), e.getMessage());
         }
