@@ -2,7 +2,7 @@ package pan.affiliation.infrastructure.gateways.ibge;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQuery;
+import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQueryHandler;
 import pan.affiliation.infrastructure.shared.http.helpers.HttpClientStubBuilder;
 import pan.affiliation.infrastructure.shared.http.helpers.HttpGatewayServiceFactory;
 import pan.affiliation.infrastructure.shared.http.helpers.ServiceCreator;
@@ -42,7 +42,7 @@ public class IbgeGatewayServiceTest {
         var requestPath = "estados/51/municipios";
         var requestbody = "[{\"id\":11,\"nome\":\"Cuiabá\"}]";
         var statusCode = 200;
-        GetCitiesFromStatesQuery gatewayService = getGatewayService(
+        GetCitiesFromStatesQueryHandler gatewayService = getGatewayService(
                 baseUrl,
                 requestPath,
                 requestbody,

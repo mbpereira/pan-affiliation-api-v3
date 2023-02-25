@@ -5,6 +5,6 @@ import pan.affiliation.shared.exceptions.QueryException;
 
 import java.util.List;
 
-public interface GetCitiesFromStatesQuery {
+public interface GetCitiesFromStatesQueryHandler {
     List<City> getCitiesFromState(int stateId) throws QueryException;
 }

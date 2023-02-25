@@ -3,7 +3,7 @@ package pan.affiliation.application.usecases;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import pan.affiliation.domain.modules.localization.entities.City;
-import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQuery;
+import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQueryHandler;
 import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationContext;
 import pan.affiliation.shared.validation.ValidationStatus;
@@ -19,13 +19,13 @@ public class GetCitiesFromStateUseCaseTest {
     @SneakyThrows
     @Test
     public void getCitiesFromState_shouldReturnNullWhenExceptionIsRaised() {
-        var queryMock = mock(GetCitiesFromStatesQuery.class);
+        var queryMock = mock(GetCitiesFromStatesQueryHandler.class);
         var validationContextMock = mock(ValidationContext.class);
         var exception = new QueryException("errorCode", "errorMessage");
         when(queryMock.getCitiesFromState(51)).thenThrow(exception);
-        var getCountryStateUseCase = new GetCitiesFromStateUseCase(queryMock, validationContextMock);
+        var getCitiesFromStateUseCase = new GetCitiesFromStateUseCase(queryMock, validationContextMock);
 
-        var result = getCountryStateUseCase.getCitiesFromState(51);
+        var result = getCitiesFromStateUseCase.getCitiesFromState(51);
 
         assertNull(result);
         verify(validationContextMock).setStatus(ValidationStatus.INTEGRATION_ERROR);
@@ -38,12 +38,12 @@ public class GetCitiesFromStateUseCaseTest {
     public void getCitiesFromState_shouldReturnExpectedCities() {
         var cities = new ArrayList<City>();
         cities.add(new City(11, "Cuiabá"));
-        var queryMock = mock(GetCitiesFromStatesQuery.class);
+        var queryMock = mock(GetCitiesFromStatesQueryHandler.class);
         var validationContextMock = mock(ValidationContext.class);
         when(queryMock.getCitiesFromState(51)).thenReturn(cities);
-        var getCountryStateUseCase = new GetCitiesFromStateUseCase(queryMock, validationContextMock);
+        var getCitiesFromStateUseCase = new GetCitiesFromStateUseCase(queryMock, validationContextMock);
 
-        var result = getCountryStateUseCase.getCitiesFromState(51);
+        var result = getCitiesFromStateUseCase.getCitiesFromState(51);
 
         assertEquals(cities, result);
         verify(validationContextMock, never()).setStatus(any(ValidationStatus.class));
