@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pan.affiliation.api.contracts.GenericResponse;
 import pan.affiliation.application.usecases.GetCitiesFromStateUseCase;
-import pan.affiliation.application.usecases.GetCountryStateUseCase;
+import pan.affiliation.application.usecases.GetCountryStatesUseCase;
 import pan.affiliation.domain.modules.localization.entities.City;
 import pan.affiliation.domain.modules.localization.entities.State;
 import pan.affiliation.shared.validation.ValidationContext;
@@ -18,11 +18,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/states")
 public class StatesController extends DefaultController {
-    private final GetCountryStateUseCase getCountryStateUseCase;
+    private final GetCountryStatesUseCase getCountryStateUseCase;
     private final GetCitiesFromStateUseCase getCitiesFromStateUseCase;
 
     @Autowired
-    public StatesController(GetCountryStateUseCase useCase, ValidationContext validationContext, GetCitiesFromStateUseCase getCitiesFromStateUseCase) {
+    public StatesController(GetCountryStatesUseCase useCase, ValidationContext validationContext, GetCitiesFromStateUseCase getCitiesFromStateUseCase) {
         super(validationContext);
         this.getCountryStateUseCase = useCase;
         this.getCitiesFromStateUseCase = getCitiesFromStateUseCase;

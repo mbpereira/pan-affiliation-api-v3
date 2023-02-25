@@ -22,7 +22,7 @@ class GetCountryStateUseCaseTest {
         var validationContextMock = mock(ValidationContext.class);
         var exception = new QueryException("errorCode", "errorMessage");
         when(queryMock.getCountryStates()).thenThrow(exception);
-        var getCountryStateUseCase = new GetCountryStateUseCase(queryMock, validationContextMock);
+        var getCountryStateUseCase = new GetCountryStatesUseCase(queryMock, validationContextMock);
 
         var result = getCountryStateUseCase.getCountryStates();
 
@@ -40,11 +40,37 @@ class GetCountryStateUseCaseTest {
         var queryMock = mock(GetCountryStatesQueryHandler.class);
         var validationContextMock = mock(ValidationContext.class);
         when(queryMock.getCountryStates()).thenReturn(states);
-        var getCountryStateUseCase = new GetCountryStateUseCase(queryMock, validationContextMock);
+        var getCountryStateUseCase = new GetCountryStatesUseCase(queryMock, validationContextMock);
 
         var result = getCountryStateUseCase.getCountryStates();
 
         assertEquals(states, result);
+        verify(validationContextMock, never()).setStatus(any(ValidationStatus.class));
+        verify(queryMock, times(1)).getCountryStates();
+    }
+
+    @SneakyThrows
+    @Test
+    public void getCountryStates_shouldReturnOrderedStates() {
+        var states = new ArrayList<State>();
+        states.add(new State(11, "MT", "Mato-Grosso"));
+        states.add(new State(12, "SP", "São Paulo"));
+        states.add(new State(13, "BA", "Bahia"));
+        states.add(new State(14, "RS", "Rio Grande do Sul"));
+        states.add(new State(15, "RJ", "Rio de Janeiro"));
+
+        var queryMock = mock(GetCountryStatesQueryHandler.class);
+        var validationContextMock = mock(ValidationContext.class);
+        when(queryMock.getCountryStates()).thenReturn(states);
+        var getCountryStateUseCase = new GetCountryStatesUseCase(queryMock, validationContextMock);
+
+        var result = getCountryStateUseCase.getCountryStates();
+
+        assertEquals("SP", result.get(0).getAcronym());
+        assertEquals("RJ", result.get(1).getAcronym());
+        assertEquals("BA", result.get(2).getAcronym());
+        assertEquals("MT", result.get(3).getAcronym());
+        assertEquals("RS", result.get(4).getAcronym());
         verify(validationContextMock, never()).setStatus(any(ValidationStatus.class));
         verify(queryMock, times(1)).getCountryStates();
     }
