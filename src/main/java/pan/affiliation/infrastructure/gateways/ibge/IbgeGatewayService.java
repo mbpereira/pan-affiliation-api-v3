@@ -27,6 +27,6 @@ public class IbgeGatewayService implements GetCountryStatesQuery {
     public List<State> getCountryStates() throws QueryException {
         var states = this.http.get(getStatesPath, StateResponse[].class);
         return Arrays.stream(states)
-                .map(s -> new State(s.getId(), s.getName(), s.getAcronym())).toList();
+                .map(s -> new State(s.getId(), s.getAcronym(), s.getName())).toList();
     }
 }
