@@ -1,6 +1,5 @@
 package pan.affiliation.shared.validation;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -25,7 +24,7 @@ public class ValidationContextImpl implements ValidationContext {
 
     @Override
     public Boolean hasErrors() {
-        return this.errors.size() == 0;
+        return this.errors.size() > 0;
     }
 
     @Override

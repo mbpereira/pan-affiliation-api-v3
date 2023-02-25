@@ -32,7 +32,7 @@ public class GenericResponseFactory<T> {
         if (ValidationStatus.PARTIAL_SUCCESS.equals(validationStatus))
             return createGenericResponse(206);
 
-        if (ValidationStatus.SUCCESS.equals(validationStatus))
+        if (ValidationStatus.SUCCESS.equals(validationStatus) && this.data != null)
             return createGenericResponse(200);
 
         if (ValidationStatus.NOT_FOUND.equals(validationStatus))
