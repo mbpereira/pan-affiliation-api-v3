@@ -1,5 +1,6 @@
 package pan.affiliation.shared.validation;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -7,10 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@Scope("request")
 public class ValidationContextImpl implements ValidationContext {
-
     private final List<Error> errors;
-
     private ValidationStatus validationStatus;
 
     public ValidationContextImpl() {
@@ -49,11 +49,11 @@ public class ValidationContextImpl implements ValidationContext {
 
     @Override
     public void addNotifications(List<Error> errors) {
-        errors.forEach(e -> this.errors.add(e));
+        this.errors.addAll(errors);
     }
 
     @Override
     public void addNotifications(ValidationResult validationResult) {
-        validationResult.getErrors().forEach(e -> this.errors.add(e));
+        this.errors.addAll(validationResult.getErrors());
     }
 }

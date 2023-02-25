@@ -1,11 +1,10 @@
 package pan.affiliation.domain.modules.localization.queries;
 
 import pan.affiliation.domain.modules.localization.entities.State;
-import pan.affiliation.shared.exceptions.HttpException;
+import pan.affiliation.shared.exceptions.QueryException;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface GetCountryStatesQuery {
-    List<State> getCountryStates() throws IOException, InterruptedException, HttpException;
+    List<State> getCountryStates() throws QueryException;
 }

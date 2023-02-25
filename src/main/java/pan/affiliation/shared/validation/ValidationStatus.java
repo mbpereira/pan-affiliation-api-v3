@@ -6,6 +6,5 @@ public enum ValidationStatus {
     PARTIAL_SUCCESS,
     SUCCESS,
     CONFLICT,
-
     INTEGRATION_ERROR
 }

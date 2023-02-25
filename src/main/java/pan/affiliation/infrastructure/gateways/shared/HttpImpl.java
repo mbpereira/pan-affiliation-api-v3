@@ -1,12 +1,9 @@
 package pan.affiliation.infrastructure.gateways.shared;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.gson.Gson;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import pan.affiliation.infrastructure.gateways.shared.bodyhandlers.JsonBodyHandler;
-import pan.affiliation.shared.exceptions.HttpException;
+import pan.affiliation.shared.exceptions.QueryException;
+import pan.affiliation.shared.validation.ValidationStatus;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,22 +26,26 @@ public class HttpImpl implements Http {
     }
 
     @Override
-    public <TOutput> TOutput get(String path, Class<TOutput> responseClass) throws IOException, InterruptedException, HttpException {
-        // create a request
+    public <T> T get(String path, Class<T> responseClass) throws QueryException {
         var url = String.format("%s/%s", baseUrl, path);
         var request = HttpRequest
                 .newBuilder(URI.create(url))
                 .build();
-        var response = this.http.send(request, HttpResponse.BodyHandlers.ofString());
-
-        ensureSuccessStatusCode(response);
-
-        return new Gson().fromJson(response.body(), responseClass);
+        try {
+            var response = this.http.send(request, HttpResponse.BodyHandlers.ofString());
+            ensureSuccessStatusCode(response);
+            return new Gson().fromJson(response.body(), responseClass);
+        } catch (IOException | InterruptedException e) {
+            throw new QueryException(ValidationStatus.INTEGRATION_ERROR.toString(), e.getMessage());
+        }
     }
 
-    private static void ensureSuccessStatusCode(HttpResponse<String> response) {
+    private static void ensureSuccessStatusCode(HttpResponse<String> response) throws QueryException {
         if (response.statusCode() < 200 || response.statusCode() > 399) {
-            HttpException.throwException(response.statusCode());
+            var message = String.format("HttpStatusCode: %s; Response: %s",
+                    response.statusCode(),
+                    response.body());
+            throw new QueryException(ValidationStatus.INTEGRATION_ERROR.toString(), message);
         }
     }
 }

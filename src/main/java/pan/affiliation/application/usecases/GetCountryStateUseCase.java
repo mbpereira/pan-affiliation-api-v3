@@ -1,17 +1,18 @@
 package pan.affiliation.application.usecases;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.localization.entities.State;
 import pan.affiliation.domain.modules.localization.queries.GetCountryStatesQuery;
-import pan.affiliation.shared.exceptions.HttpException;
+import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationContext;
 import pan.affiliation.shared.validation.ValidationStatus;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
+@Scope()
 public class GetCountryStateUseCase {
     private final GetCountryStatesQuery query;
     private final ValidationContext validationContext;
@@ -25,15 +26,9 @@ public class GetCountryStateUseCase {
     public List<State> getCountryStates() {
         try {
             return this.query.getCountryStates();
-        } catch (HttpException e) {
+        } catch (QueryException e) {
             this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
-            this.validationContext.addNotification(e.getStatusCode().toString(), e.getMessage());
-        } catch (InterruptedException e) {
-            this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
-            this.validationContext.addNotification(ValidationStatus.INTEGRATION_ERROR.toString(), e.getMessage());
-        } catch (IOException e) {
-            this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
-            this.validationContext.addNotification(ValidationStatus.INTEGRATION_ERROR.toString(), e.getMessage());
+            this.validationContext.addNotification(e.getErrorCode(), e.getMessage());
         }
 
         return null;
