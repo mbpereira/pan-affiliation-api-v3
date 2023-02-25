@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import pan.affiliation.infrastructure.shared.http.abstractions.HttpService;
 import pan.affiliation.infrastructure.shared.http.abstractions.HttpServiceFactory;
 
+import java.net.http.HttpClient;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,7 +19,7 @@ public class HttpServiceFactoryImpl implements HttpServiceFactory {
         if (services.containsKey(baseUrl))
             return services.get(baseUrl);
 
-        var httpService = new HttpServiceImpl(baseUrl);
+        var httpService = new HttpServiceImpl(baseUrl, HttpClient.newHttpClient());
         services.put(baseUrl, httpService);
         return httpService;
     }

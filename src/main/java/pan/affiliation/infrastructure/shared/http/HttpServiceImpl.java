@@ -17,9 +17,9 @@ public class HttpServiceImpl implements HttpService {
     private final HttpClient http;
     private final String baseUrl;
 
-    public HttpServiceImpl(String baseUrl) {
+    public HttpServiceImpl(String baseUrl, HttpClient httpClient) {
         this.baseUrl = baseUrl;
-        this.http = HttpClient.newHttpClient();
+        this.http = httpClient;
     }
 
     @Override
