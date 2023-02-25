@@ -3,7 +3,7 @@ package pan.affiliation.application.usecases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.localization.entities.City;
-import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQuery;
+import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQueryHandler;
 import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationContext;
 import pan.affiliation.shared.validation.ValidationStatus;
@@ -12,11 +12,11 @@ import java.util.List;
 
 @Service
 public class GetCitiesFromStateUseCase {
-    private final GetCitiesFromStatesQuery query;
+    private final GetCitiesFromStatesQueryHandler query;
     private final ValidationContext validationContext;
 
     @Autowired
-    public GetCitiesFromStateUseCase(GetCitiesFromStatesQuery query, ValidationContext validationContext) {
+    public GetCitiesFromStateUseCase(GetCitiesFromStatesQueryHandler query, ValidationContext validationContext) {
         this.query = query;
         this.validationContext = validationContext;
     }
