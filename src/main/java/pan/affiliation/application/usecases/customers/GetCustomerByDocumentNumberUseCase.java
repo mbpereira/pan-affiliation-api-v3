@@ -8,6 +8,8 @@ import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationContext;
 import pan.affiliation.shared.validation.ValidationStatus;
 
+import static pan.affiliation.shared.constants.Messages.INVALID_DOCUMENT;
+
 @Service
 public class GetCustomerByDocumentNumberUseCase {
     private final GetCustomerByDocumentNumberQueryHandler query;
@@ -20,6 +22,12 @@ public class GetCustomerByDocumentNumberUseCase {
 
     public Customer getCustomerByDocumentNumber(DocumentNumber documentNumber) {
         try {
+            if (!documentNumber.isValid()) {
+                this.validationContext.addNotification(
+                        "documentNumber",
+                        INVALID_DOCUMENT
+                );
+            }
             var customer = this.query.getCustomerByDocumentNumber(documentNumber);
 
             if (customer == null) {
