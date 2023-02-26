@@ -39,7 +39,10 @@ public class GetCountryStatesUseCase {
         var priorityStates = getPriorityStates();
         var statesMap = states.stream().collect(Collectors.toMap(State::getAcronym, Function.identity()));
         var orderedStates = new ArrayList<State>();
-        priorityStates.forEach(p -> orderedStates.add(statesMap.get(p.toUpperCase())));
+        priorityStates.forEach(p -> {
+            if (statesMap.containsKey(p))
+                orderedStates.add(statesMap.get(p.toUpperCase()));
+        });
         orderedStates.addAll(states
                 .stream()
                 .filter(s -> !priorityStates.contains(s.getAcronym()))
