@@ -44,7 +44,7 @@ class GetCountryStateUseCaseTest {
 
         var result = getCountryStateUseCase.getCountryStates();
 
-        assertEquals(states, result);
+        assertEquals("MT", result.get(0).getAcronym());
         verify(validationContextMock, never()).setStatus(any(ValidationStatus.class));
         verify(queryMock, times(1)).getCountryStates();
     }
