@@ -2,6 +2,7 @@ package pan.affiliation.application.usecases;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import pan.affiliation.application.usecases.localization.GetCitiesFromStateUseCase;
 import pan.affiliation.domain.modules.localization.entities.City;
 import pan.affiliation.domain.modules.localization.queries.GetCitiesFromStatesQueryHandler;
 import pan.affiliation.shared.exceptions.QueryException;

@@ -1,4 +1,4 @@
-package pan.affiliation.application.usecases;
+package pan.affiliation.application.usecases.localization;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

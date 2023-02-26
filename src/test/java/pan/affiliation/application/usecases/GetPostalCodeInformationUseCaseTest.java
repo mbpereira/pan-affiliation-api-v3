@@ -2,6 +2,7 @@ package pan.affiliation.application.usecases;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import pan.affiliation.application.usecases.localization.GetPostalCodeInformationUseCase;
 import pan.affiliation.domain.modules.customers.valueobjects.PostalCode;
 import pan.affiliation.domain.modules.localization.entities.PostalCodeInformation;
 import pan.affiliation.domain.modules.localization.queries.GetPostalCodeInformationQueryHandler;
