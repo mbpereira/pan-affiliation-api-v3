@@ -12,11 +12,13 @@ import lombok.Setter;
 import pan.affiliation.domain.modules.customers.valueobjects.PostalCode;
 import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
     @Getter
-    private Long id;
+    private UUID id;
     @ValidVo
     @JsonIgnore
     private PostalCode postalCode;

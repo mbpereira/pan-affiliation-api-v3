@@ -17,6 +17,7 @@ import pan.affiliation.shared.validation.ValidationStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -99,9 +100,10 @@ public class CreateCustomerUseCaseTest {
         var customer = input.toDomainEntity();
         var useCase = getUseCase();
 
+        var id = UUID.randomUUID();
         Mockito.when(this.commandHandlerMock.createCustomer(Mockito.any(Customer.class)))
                 .thenReturn(new Customer(
-                        1L,
+                        id,
                         customer.getDocumentNumber(),
                         customer.getName(),
                         customer.getAddresses()
@@ -110,7 +112,7 @@ public class CreateCustomerUseCaseTest {
         var result = useCase.createCustomer(input);
 
         assertEquals(customer.getName(), result.getName());
-        assertEquals(1L, result.getId());
+        assertEquals(id, result.getId());
     }
 
     private CreateCustomerInput getValidInput() {

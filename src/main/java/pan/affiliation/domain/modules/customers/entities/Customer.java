@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import pan.affiliation.domain.modules.customers.valueobjects.DocumentNumber;
-import pan.affiliation.domain.shared.BaseEntitiy;
+import pan.affiliation.domain.shared.AggregateRoot;
 import pan.affiliation.shared.validation.ValidationResult;
 import pan.affiliation.shared.validation.ValidatorFactory;
 import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
@@ -17,13 +17,12 @@ import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static pan.affiliation.shared.constants.Messages.INVALID_DOCUMENT;
 
 @SuppressWarnings("unused")
-public class Customer extends BaseEntitiy {
-    @Getter
-    private final Long id;
+public class Customer extends AggregateRoot {
     @ValidVo(message = INVALID_DOCUMENT)
     @JsonIgnore
     private DocumentNumber documentNumber;
@@ -36,11 +35,12 @@ public class Customer extends BaseEntitiy {
     private final List<Address> addresses;
 
     public Customer(
-            Long id,
+            UUID id,
             String documentNumber,
             String name,
             List<Address> addresses) {
-        this.id = id;
+
+        super.id = id;
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = addresses;
@@ -49,7 +49,7 @@ public class Customer extends BaseEntitiy {
     public Customer(
             String documentNumber,
             String name) {
-        this.id = null;
+        super.generateId();
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Customer extends BaseEntitiy {
             String documentNumber,
             String name,
             List<Address> addresses) {
-        this.id = null;
+        super.generateId();
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = addresses;

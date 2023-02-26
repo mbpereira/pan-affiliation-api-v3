@@ -1,7 +1,14 @@
 package pan.affiliation.domain.shared;
 
-import pan.affiliation.shared.validation.ValidationResult;
+import lombok.Getter;
 
+import java.util.UUID;
+
+@Getter
 public abstract class BaseEntitiy {
-    public abstract ValidationResult validate();
+    protected UUID id;
+
+    public void generateId() {
+        this.id = UUID.randomUUID();
+    }
 }
