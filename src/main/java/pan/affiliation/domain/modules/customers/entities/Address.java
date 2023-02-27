@@ -5,37 +5,73 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pan.affiliation.domain.modules.customers.valueobjects.PostalCode;
+import pan.affiliation.domain.shared.BaseEntitiy;
 import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
 
 import java.util.UUID;
 
-@NoArgsConstructor
-@AllArgsConstructor
-public class Address {
-    @Getter
-    private UUID id;
+public class Address extends BaseEntitiy {
     @ValidVo
     @JsonIgnore
     private PostalCode postalCode;
-    @Getter @Setter @Size(min = 3, max = 300) @NotBlank
-    public String street;
-    @Getter @Setter
-    public int number;
-    @Getter @Setter @Size(min = 3, max = 100) @NotBlank
-    public String city;
-    @Getter @Setter @Size(max = 2) @NotBlank
-    public String state;
-    @Getter @Setter @Size(min = 3, max = 50) @NotBlank
-    public String country;
-    @Getter @Setter
-    public String complement;
-    @Getter @Setter @Size(min = 3, max = 150) @NotBlank
-    public String neighborhood;
+    @Getter
+    @Setter
+    @Size(min = 3, max = 300)
+    @NotBlank
+    private String street;
+    @Getter
+    @Setter
+    private int number;
+    @Getter
+    @Setter
+    @Size(min = 3, max = 100)
+    @NotBlank
+    private String city;
+    @Getter
+    @Setter
+    @Size(max = 2)
+    @NotBlank
+    private String state;
+    @Getter
+    @Setter
+    @Size(min = 3, max = 50)
+    @NotBlank
+    private String country;
+    @Getter
+    @Setter
+    private String complement;
+    @Getter
+    @Setter
+    @Size(min = 3, max = 150)
+    @NotBlank
+    private String neighborhood;
+
+    public Address(UUID id, String postalCode, String street, int number, String city, String state, String country, String complement, String neighborhood) {
+        super.id = id;
+        this.postalCode = new PostalCode(postalCode);
+        this.street = street;
+        this.number = number;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.complement = complement;
+        this.neighborhood = neighborhood;
+    }
+
+    public Address(String postalCode, String street, int number, String city, String state, String country, String complement, String neighborhood) {
+        super.generateId();
+        this.postalCode = new PostalCode(postalCode);
+        this.street = street;
+        this.number = number;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.complement = complement;
+        this.neighborhood = neighborhood;
+    }
 
     @JsonGetter("postalCode")
     public String getPostalCode() {

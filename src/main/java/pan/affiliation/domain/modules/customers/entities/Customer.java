@@ -23,6 +23,8 @@ import static pan.affiliation.shared.constants.Messages.INVALID_DOCUMENT;
 
 @SuppressWarnings("unused")
 public class Customer extends AggregateRoot {
+    @Valid
+    private final List<Address> addresses;
     @ValidVo(message = INVALID_DOCUMENT)
     @JsonIgnore
     private DocumentNumber documentNumber;
@@ -31,45 +33,22 @@ public class Customer extends AggregateRoot {
     @NotBlank
     @Size(min = 3, max = 300)
     private String name;
-    @Valid
-    private final List<Address> addresses;
 
-    public Customer(
-            UUID id,
-            String documentNumber,
-            String name,
-            List<Address> addresses) {
-
+    public Customer(UUID id, String documentNumber, String name, List<Address> addresses) {
         super.id = id;
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = addresses;
     }
 
-    public Customer(
-            String documentNumber,
-            String name) {
+    public Customer(String documentNumber, String name) {
         super.generateId();
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = new ArrayList<>();
     }
 
-    public Customer(
-            String documentNumber,
-            String name,
-            List<Address> addresses) {
-        super.generateId();
-        this.documentNumber = new DocumentNumber(documentNumber);
-        this.name = name;
-        this.addresses = addresses;
-    }
-
-    @JsonSetter("documentNumber")
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = new DocumentNumber(documentNumber);
-    }
-
+    @JsonIgnore
     public DocumentNumber getDocumentNumberVo() {
         return this.documentNumber;
     }
@@ -79,7 +58,13 @@ public class Customer extends AggregateRoot {
         return this.documentNumber.getValue();
     }
 
+    @JsonSetter("documentNumber")
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = new DocumentNumber(documentNumber);
+    }
+
     public void addAddress(Address address) {
+        address.generateId();
         this.addresses.add(address);
     }
 
@@ -90,8 +75,7 @@ public class Customer extends AggregateRoot {
     public Boolean changeAddress(Address address) {
         int position = getAddressPosition(address);
 
-        if (position == -1)
-            return false;
+        if (position == -1) return false;
 
         this.addresses.set(position, address);
 
@@ -112,5 +96,9 @@ public class Customer extends AggregateRoot {
     public ValidationResult validate() {
         var validator = ValidatorFactory.<Customer>create();
         return validator.validate(this);
+    }
+
+    public void addAddresses(List<Address> addresses) {
+        addresses.forEach(this::addAddress);
     }
 }

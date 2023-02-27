@@ -3,7 +3,6 @@ package pan.affiliation.infrastructure.persistence.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import pan.affiliation.domain.modules.customers.entities.Address;
-import pan.affiliation.domain.modules.customers.valueobjects.PostalCode;
 
 import java.util.UUID;
 
@@ -19,16 +18,16 @@ public class AddressDataModel {
     @Id
     private UUID id;
     private String postalCode;
-    public String street;
-    public int number;
-    public String city;
-    public String state;
-    public String country;
-    public String complement;
-    public String neighborhood;
+    private String street;
+    private int number;
+    private String city;
+    private String state;
+    private String country;
+    private String complement;
+    private String neighborhood;
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    public CustomerDataModel customer;
+    @JoinColumn(name = "customer_id", nullable = false, updatable = false)
+    private CustomerDataModel customer;
 
     public static AddressDataModel fromDomainEntity(Address address) {
         return new AddressDataModel(
@@ -48,7 +47,7 @@ public class AddressDataModel {
     public Address toDomainEntity() {
         return new Address(
             this.id,
-            new PostalCode(this.postalCode),
+            this.postalCode,
             this.street,
             this.number,
             this.city,

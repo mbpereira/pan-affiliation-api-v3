@@ -10,6 +10,7 @@ CREATE TABLE addresses (
     postal_code VARCHAR(8) NOT NULL,
     street VARCHAR(300) NOT NULL,
     number INT NULL,
+    city VARCHAR(100) NOT NULL,
     state VARCHAR(2) NOT NULL,
     country VARCHAR(50) NOT NULL,
     complement VARCHAR(100) NULL,

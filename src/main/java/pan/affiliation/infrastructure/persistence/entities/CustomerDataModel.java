@@ -23,12 +23,15 @@ public class CustomerDataModel {
     private List<AddressDataModel> addresses;
 
     public static CustomerDataModel fromDomainEntity(Customer customer) {
-        return new CustomerDataModel(
+        var customerDataModel = new CustomerDataModel(
             customer.getId(),
             customer.getDocumentNumber(),
             customer.getName(),
-            customer.getAddresses().stream().map(AddressDataModel::fromDomainEntity).toList()
+            customer.getAddresses().stream()
+                    .map(AddressDataModel::fromDomainEntity).toList()
         );
+        customerDataModel.getAddresses().forEach(a -> a.setCustomer(customerDataModel));
+        return customerDataModel;
     }
 
     public Customer toDomainEntity() {

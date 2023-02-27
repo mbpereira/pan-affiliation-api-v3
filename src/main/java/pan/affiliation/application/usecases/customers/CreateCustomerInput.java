@@ -6,12 +6,13 @@ import java.util.List;
 
 public record CreateCustomerInput(String name, String documentNumber, List<AddressInput> addresses) {
     public Customer toDomainEntity() {
-        return new Customer(
+        var customer = new Customer(
             this.documentNumber,
-            this.name,
-            this.addresses
-                .stream()
-                .map(AddressInput::toDomainEntity).toList()
+            this.name
         );
+        customer.addAddresses(this.addresses
+                .stream()
+                .map(AddressInput::toDomainEntity).toList());
+        return customer;
     }
 }

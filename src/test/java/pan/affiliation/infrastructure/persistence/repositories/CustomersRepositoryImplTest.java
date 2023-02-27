@@ -27,7 +27,7 @@ public class CustomersRepositoryImplTest {
         var repositoryImpl = getRepositoryImpl();
 
         var ex = assertThrows(CommandException.class,
-                () -> repositoryImpl.createCustomer(new Customer("00000000000", "Mateus", null)));
+                () -> repositoryImpl.createCustomer(new Customer(null, "00000000000", "Mateus", null)));
 
         assertEquals(ValidationStatus.INTEGRATION_ERROR.toString(), ex.getErrorCode());
     }
