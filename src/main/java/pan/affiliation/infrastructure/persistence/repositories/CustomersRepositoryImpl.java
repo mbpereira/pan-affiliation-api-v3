@@ -5,13 +5,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import pan.affiliation.domain.modules.customers.commands.ChangeCustomerCommandHandler;
 import pan.affiliation.domain.modules.customers.commands.CreateCustomerCommandHandler;
+import pan.affiliation.domain.modules.customers.entities.Customer;
 import pan.affiliation.domain.modules.customers.queries.GetCustomerByDocumentNumberQueryHandler;
 import pan.affiliation.domain.modules.customers.queries.GetCustomerByIdQueryHandler;
 import pan.affiliation.domain.modules.customers.valueobjects.DocumentNumber;
+import pan.affiliation.domain.shared.BaseEntitiy;
 import pan.affiliation.infrastructure.persistence.entities.CustomerDataModel;
 import pan.affiliation.shared.exceptions.CommandException;
 import pan.affiliation.shared.exceptions.QueryException;
-import pan.affiliation.domain.modules.customers.entities.Customer;
 import pan.affiliation.shared.validation.ValidationStatus;
 
 import java.util.UUID;
@@ -67,10 +68,10 @@ public class CustomersRepositoryImpl implements
             var addressesToRemove = customer
                     .getRemovedAddresses()
                     .stream()
-                    .map(a -> a.getId()).toList();
+                    .map(BaseEntitiy::getId).toList();
             var customerDataModel = CustomerDataModel.fromDomainEntity(customer);
-            this.addressesRepository.deleteAllById(addressesToRemove);
             this.customersRepository.save(customerDataModel);
+            this.addressesRepository.deleteAllById(addressesToRemove);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
             throw new CommandException(
