@@ -27,6 +27,8 @@ public class GetCustomerByDocumentNumberUseCase {
                         "documentNumber",
                         INVALID_DOCUMENT
                 );
+
+                return null;
             }
             var customer = this.query.getCustomerByDocumentNumber(documentNumber);
 

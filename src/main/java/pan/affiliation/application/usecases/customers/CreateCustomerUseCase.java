@@ -43,6 +43,8 @@ public class CreateCustomerUseCase {
                         ValidationStatus.CONFLICT.toString(),
                         Messages.CONFLICT
                 );
+
+                return null;
             }
 
             return this.command.createCustomer(customer);
