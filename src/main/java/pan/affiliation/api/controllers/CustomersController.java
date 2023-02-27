@@ -41,4 +41,9 @@ public class CustomersController extends DefaultController {
     public ResponseEntity<GenericResponse<Address>> getCustomerByDocumentNumber(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressInput address) {
         return createGenericResponse(this.saveAddressUseCase.saveAddress(new SaveAddressInput(customerId, addressId, address)));
     }
+
+    @PostMapping("/{customerId}/addresses")
+    public ResponseEntity<GenericResponse<Address>> createAddress(@PathVariable UUID customerId, @RequestBody AddressInput address) {
+        return createGenericResponse(this.saveAddressUseCase.saveAddress(new SaveAddressInput(customerId, null, address)));
+    }
 }
