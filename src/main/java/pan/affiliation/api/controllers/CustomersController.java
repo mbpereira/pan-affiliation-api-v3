@@ -37,7 +37,7 @@ public class CustomersController extends DefaultController {
         return createGenericResponse(getCustomerByDocumentNumberUseCase.getCustomerByDocumentNumber(new DocumentNumber(documentNumber)));
     }
 
-    @PutMapping("/customers/{customerId}/addresses/{addressId}")
+    @PutMapping("/{customerId}/addresses/{addressId}")
     public ResponseEntity<GenericResponse<Address>> getCustomerByDocumentNumber(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressInput address) {
         return createGenericResponse(this.changeAddressUseCase.changeAddress(new ChangeAddressInput(customerId, addressId, address)));
     }
