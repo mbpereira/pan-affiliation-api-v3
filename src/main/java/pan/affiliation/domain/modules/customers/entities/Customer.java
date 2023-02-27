@@ -12,7 +12,7 @@ import pan.affiliation.domain.modules.customers.valueobjects.DocumentNumber;
 import pan.affiliation.domain.shared.AggregateRoot;
 import pan.affiliation.shared.validation.ValidationResult;
 import pan.affiliation.shared.validation.ValidatorFactory;
-import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
+import pan.affiliation.domain.modules.customers.validation.jakarta.annotations.ValidVo;
 
 import java.util.ArrayList;
 import java.util.List;

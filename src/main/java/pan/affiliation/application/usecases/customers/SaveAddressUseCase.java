@@ -1,5 +1,7 @@
 package pan.affiliation.application.usecases.customers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.customers.commands.ChangeCustomerCommandHandler;
@@ -13,6 +15,8 @@ import static pan.affiliation.shared.constants.Messages.NOT_FOUND_RECORD;
 
 @Service
 public class SaveAddressUseCase extends ChangeCustomerBaseUseCase {
+    private final static Logger logger = LoggerFactory.getLogger(SaveAddressUseCase.class);
+
     @Autowired
     public SaveAddressUseCase(
             ChangeCustomerCommandHandler command,
@@ -22,6 +26,8 @@ public class SaveAddressUseCase extends ChangeCustomerBaseUseCase {
     }
 
     public Address saveAddress(SaveAddressInput input) {
+        logger.info("Saving address");
+
         var customer = this.getCustomerById(input.customerId());
 
         if (customer == null)
@@ -31,6 +37,7 @@ public class SaveAddressUseCase extends ChangeCustomerBaseUseCase {
         var newAddressData = input.toDomainEntity();
 
         if (isNewAddress) {
+            logger.info("Adding new address");
             customer.addAddress(newAddressData);
         } else {
             if (!saveAddress(customer, newAddressData))
@@ -46,9 +53,12 @@ public class SaveAddressUseCase extends ChangeCustomerBaseUseCase {
     }
 
     private boolean saveAddress(Customer customer, Address newAddressData) {
+        logger.info("Changing existing address");
+
         var addressChanged = customer.changeAddress(newAddressData);
 
         if(!addressChanged) {
+            logger.warn("Invalid address data provided");
             this.validationContext.setStatus(ValidationStatus.NOT_FOUND);
             this.validationContext.addNotification(
                     "address",

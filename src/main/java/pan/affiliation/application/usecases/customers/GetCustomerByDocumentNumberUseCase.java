@@ -1,5 +1,7 @@
 package pan.affiliation.application.usecases.customers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.customers.entities.Customer;
 import pan.affiliation.domain.modules.customers.queries.GetCustomerByDocumentNumberQueryHandler;
@@ -14,6 +16,7 @@ import static pan.affiliation.shared.constants.Messages.INVALID_DOCUMENT;
 public class GetCustomerByDocumentNumberUseCase {
     private final GetCustomerByDocumentNumberQueryHandler query;
     private final ValidationContext validationContext;
+    private final static Logger logger = LoggerFactory.getLogger(GetCustomerByDocumentNumberUseCase.class);
 
     public GetCustomerByDocumentNumberUseCase(GetCustomerByDocumentNumberQueryHandler query, ValidationContext validationContext) {
         this.query = query;
@@ -23,6 +26,7 @@ public class GetCustomerByDocumentNumberUseCase {
     public Customer getCustomerByDocumentNumber(DocumentNumber documentNumber) {
         try {
             if (!documentNumber.isValid()) {
+                logger.warn("Document number {} is not valid", documentNumber.getValue());
                 this.validationContext.addNotification(
                         "documentNumber",
                         INVALID_DOCUMENT
@@ -33,12 +37,14 @@ public class GetCustomerByDocumentNumberUseCase {
             var customer = this.query.getCustomerByDocumentNumber(documentNumber);
 
             if (customer == null) {
+                logger.warn("Customer identified by {} is does not exists", documentNumber.getValue());
                 this.validationContext.setStatus(ValidationStatus.NOT_FOUND);
                 return null;
             }
 
             return customer;
         } catch (QueryException e) {
+            logger.error("Get customer by document number failed", e);
             this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
             this.validationContext.addNotification(
                     e.getErrorCode(),
