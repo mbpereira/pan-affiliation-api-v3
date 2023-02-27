@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pan.affiliation.domain.modules.customers.valueobjects.PostalCode;
 import pan.affiliation.domain.shared.BaseEntitiy;
-import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
+import pan.affiliation.domain.modules.customers.validation.jakarta.annotations.ValidVo;
 
 import java.util.UUID;
 

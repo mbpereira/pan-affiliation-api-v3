@@ -1,5 +1,7 @@
 package pan.affiliation.application.usecases.localization;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.localization.entities.City;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class GetCitiesFromStateUseCase {
+    private final static Logger logger = LoggerFactory.getLogger(GetCitiesFromStateUseCase.class);
     private final GetCitiesFromStatesQueryHandler query;
     private final ValidationContext validationContext;
 
@@ -24,23 +27,31 @@ public class GetCitiesFromStateUseCase {
     }
 
     public List<City> getCitiesFromState(int stateId) {
+        logger.info("Getting cities from state {}", stateId);
+
         try {
             var cities = this.query.getCitiesFromState(stateId);
 
             if (cities == null || cities.size() == 0) {
+                logger.warn("State identified by {} not found", stateId);
                 this.validationContext.setStatus(ValidationStatus.NOT_FOUND);
                 return null;
             }
 
-            return cities
-                    .stream()
-                    .sorted(Comparator.comparing(City::getName))
-                    .collect(Collectors.toList());
+            return this.sort(cities);
         } catch (QueryException e) {
+            logger.error("Get cities failed", e);
             this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
             this.validationContext.addNotification(e.getErrorCode(), e.getMessage());
         }
 
         return null;
+    }
+
+    private List<City> sort(List<City> cities) {
+        return cities
+                .stream()
+                .sorted(Comparator.comparing(City::getName))
+                .collect(Collectors.toList());
     }
 }

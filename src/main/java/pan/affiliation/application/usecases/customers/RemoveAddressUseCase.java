@@ -13,7 +13,7 @@ import static pan.affiliation.shared.constants.Messages.NOT_FOUND_RECORD;
 
 @Service
 public class RemoveAddressUseCase extends ChangeCustomerBaseUseCase {
-    private final static Logger logger = LoggerFactory.getLogger(GetCustomerByDocumentNumberUseCase.class);
+    private final static Logger logger = LoggerFactory.getLogger(RemoveAddressUseCase.class);
 
     protected RemoveAddressUseCase(ChangeCustomerCommandHandler command, ValidationContext validationContext, GetCustomerByIdQueryHandler query) {
         super(command, validationContext, query);

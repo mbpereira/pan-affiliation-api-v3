@@ -1,8 +1,8 @@
-package pan.affiliation.shared.validation.jakarta.annotations;
+package pan.affiliation.domain.modules.customers.validation.jakarta.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import pan.affiliation.shared.validation.jakarta.validators.ValidVoCheck;
+import pan.affiliation.domain.modules.customers.validation.jakarta.validators.ValidVoCheck;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
