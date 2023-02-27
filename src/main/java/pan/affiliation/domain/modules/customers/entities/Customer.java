@@ -15,7 +15,6 @@ import pan.affiliation.shared.validation.ValidatorFactory;
 import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,6 +71,7 @@ public class Customer extends AggregateRoot {
         return getAddresses(false);
     }
 
+    @JsonIgnore
     public List<Address> getRemovedAddresses() {
         return this.getAddresses(true);
     }
@@ -90,7 +90,7 @@ public class Customer extends AggregateRoot {
                 .filter(a -> a.getId().equals(addressId))
                 .findFirst();
 
-        if (!address.isPresent())
+        if (address.isEmpty())
             return false;
 
         address.get().setRemoved(true);
