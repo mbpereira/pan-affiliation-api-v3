@@ -110,13 +110,16 @@ public class SaveAddressUseCaseTest {
         var address = saveAddressInput.toDomainEntity();
         var addresses = new ArrayList<Address>();
         addresses.add(address);
+        var customer = new Customer(
+                customerId,
+                "658.524.250-52",
+                "Mateus",
+                addresses
+        );
         Mockito.when(this.query.getCustomerById(Mockito.any()))
-                .thenReturn(new Customer(
-                        customerId,
-                        "658.524.250-52",
-                        "Mateus",
-                        addresses
-                ));
+                .thenReturn(customer);
+        Mockito.when(this.command.changeCustomer(Mockito.any()))
+                .thenReturn(customer);
         var useCase = getUseCase();
 
         var result = useCase.saveAddress(saveAddressInput);
@@ -137,6 +140,8 @@ public class SaveAddressUseCaseTest {
                 new ArrayList<>()
         );
         Mockito.when(this.query.getCustomerById(Mockito.any()))
+                .thenReturn(customer);
+        Mockito.when(this.command.changeCustomer(Mockito.any()))
                 .thenReturn(customer);
         var useCase = getUseCase();
 
