@@ -1,5 +1,7 @@
 package pan.affiliation.infrastructure.persistence.repositories;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -24,6 +26,7 @@ public class CustomersRepositoryImpl implements
         CreateCustomerCommandHandler,
         ChangeCustomerCommandHandler,
         GetCustomerByIdQueryHandler {
+    private final static Logger logger = LoggerFactory.getLogger(CustomersRepositoryImpl.class);
     private final CustomersRepository customersRepository;
     private final AddressesRepository addressesRepository;
 
@@ -40,6 +43,7 @@ public class CustomersRepositoryImpl implements
             this.customersRepository.save(customerDataModel);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
+            logger.error("Create customer failed", ex);
             throw new CommandException(
                     ValidationStatus.INTEGRATION_ERROR.toString(),
                     ex.getMessage());
@@ -56,6 +60,7 @@ public class CustomersRepositoryImpl implements
 
             return customer.toDomainEntity();
         } catch (Exception ex) {
+            logger.error("Get customer by document number failed", ex);
             throw new QueryException(
                     ValidationStatus.INTEGRATION_ERROR.toString(),
                     ex.getMessage());
@@ -74,6 +79,7 @@ public class CustomersRepositoryImpl implements
             this.addressesRepository.deleteAllById(addressesToRemove);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
+            logger.error("Change customer failed", ex);
             throw new CommandException(
                     ValidationStatus.INTEGRATION_ERROR.toString(),
                     ex.getMessage());
@@ -87,6 +93,7 @@ public class CustomersRepositoryImpl implements
 
             return customer.map(CustomerDataModel::toDomainEntity).orElse(null);
         } catch (Exception ex) {
+            logger.error("Get customer by id failed", ex);
             throw new QueryException(
                     ValidationStatus.INTEGRATION_ERROR.toString(),
                     ex.getMessage());

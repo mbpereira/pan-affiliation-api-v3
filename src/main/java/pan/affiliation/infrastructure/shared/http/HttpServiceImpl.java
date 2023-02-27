@@ -1,6 +1,8 @@
 package pan.affiliation.infrastructure.shared.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pan.affiliation.infrastructure.shared.http.abstractions.HttpService;
 import pan.affiliation.shared.exceptions.QueryException;
 import pan.affiliation.shared.validation.ValidationStatus;
@@ -14,6 +16,8 @@ import java.net.http.HttpResponse;
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 public class HttpServiceImpl implements HttpService {
+    private final static Logger logger = LoggerFactory.getLogger(HttpServiceImpl.class);
+
     private final HttpClient http;
     private final String baseUrl;
 
@@ -29,12 +33,20 @@ public class HttpServiceImpl implements HttpService {
                 .newBuilder(URI.create(url))
                 .build();
         try {
+            logger.info("sending http GET {}", url);
+
             var response = this.http.send(request, HttpResponse.BodyHandlers.ofString());
             ensureSuccessStatusCode(response);
+
+            logger.info("received success response from http GET {}", url);
+
             var mapper = new ObjectMapper()
                     .disable(FAIL_ON_UNKNOWN_PROPERTIES);
+
             return mapper.readValue(response.body(), clazz);
         } catch (IOException | InterruptedException e) {
+            logger.error("http GET {} failed", url);
+            logger.error("Request failed", e);
             throw new QueryException(ValidationStatus.INTEGRATION_ERROR.toString(), e.getMessage());
         }
     }
@@ -44,6 +56,7 @@ public class HttpServiceImpl implements HttpService {
             var message = String.format("HttpStatusCode: %s; Response: %s",
                     response.statusCode(),
                     response.body());
+            logger.warn("Request failed. response: {}", message);
             throw new QueryException(ValidationStatus.INTEGRATION_ERROR.toString(), message);
         }
     }
