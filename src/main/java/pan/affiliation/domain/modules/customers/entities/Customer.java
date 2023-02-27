@@ -38,7 +38,7 @@ public class Customer extends AggregateRoot {
         super.id = id;
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
-        this.addresses = addresses;
+        this.addresses = new ArrayList<>(addresses);
     }
 
     public Customer(String documentNumber, String name) {
