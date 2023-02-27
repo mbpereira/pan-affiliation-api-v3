@@ -1,16 +1,17 @@
 package pan.affiliation.domain.modules.customers.valueobjects;
 
+import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
-import pan.affiliation.shared.valueobjects.ValueObject;
+import pan.affiliation.domain.shared.valueobjects.ValueObject;
 import pan.affiliation.shared.helpers.StringHelpers;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.regex.Pattern;
 
 @Getter
 public class PostalCode extends ValueObject {
     private final String originalValue;
     private final String value;
+    @AssertTrue
     private Boolean isValid;
 
     public PostalCode(String postalCode) {
