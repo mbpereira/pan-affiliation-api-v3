@@ -23,18 +23,20 @@ public class CustomersRepositoryImpl implements
         CreateCustomerCommandHandler,
         ChangeCustomerCommandHandler,
         GetCustomerByIdQueryHandler {
-    private final CustomerRepository repository;
+    private final CustomersRepository customersRepository;
+    private final AddressesRepository addressesRepository;
 
     @Autowired
-    public CustomersRepositoryImpl(CustomerRepository repository) {
-        this.repository = repository;
+    public CustomersRepositoryImpl(CustomersRepository customersRepository, AddressesRepository addressesRepository) {
+        this.customersRepository = customersRepository;
+        this.addressesRepository = addressesRepository;
     }
 
     @Override
     public Customer createCustomer(Customer customer) throws CommandException {
         try {
             var customerDataModel = CustomerDataModel.fromDomainEntity(customer);
-            this.repository.save(customerDataModel);
+            this.customersRepository.save(customerDataModel);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
             throw new CommandException(
@@ -46,7 +48,7 @@ public class CustomersRepositoryImpl implements
     @Override
     public Customer getCustomerByDocumentNumber(DocumentNumber documentNumber) throws QueryException {
         try {
-            var customer = this.repository.findByDocumentNumber(documentNumber.getValue());
+            var customer = this.customersRepository.findByDocumentNumber(documentNumber.getValue());
 
             if (customer == null)
                 return null;
@@ -62,9 +64,13 @@ public class CustomersRepositoryImpl implements
     @Override
     public Customer changeCustomer(Customer customer) throws CommandException {
         try {
+            var addressesToRemove = customer
+                    .getRemovedAddresses()
+                    .stream()
+                    .map(a -> a.getId()).toList();
             var customerDataModel = CustomerDataModel.fromDomainEntity(customer);
-
-            this.repository.save(customerDataModel);
+            this.addressesRepository.deleteAllById(addressesToRemove);
+            this.customersRepository.save(customerDataModel);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
             throw new CommandException(
@@ -76,7 +82,7 @@ public class CustomersRepositoryImpl implements
     @Override
     public Customer getCustomerById(UUID id) throws QueryException {
         try {
-            var customer = this.repository.findById(id);
+            var customer = this.customersRepository.findById(id);
 
             return customer.map(CustomerDataModel::toDomainEntity).orElse(null);
         } catch (Exception ex) {

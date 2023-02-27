@@ -69,7 +69,32 @@ public class Customer extends AggregateRoot {
     }
 
     public List<Address> getAddresses() {
-        return Collections.unmodifiableList(this.addresses);
+        return getAddresses(false);
+    }
+
+    public List<Address> getRemovedAddresses() {
+        return this.getAddresses(true);
+    }
+
+    private List<Address> getAddresses(Boolean removed) {
+        return this.addresses
+                .stream()
+                .filter(a -> a.isRemoved().equals(removed))
+                .toList();
+    }
+
+    public Boolean removeAddress(UUID addressId) {
+        var address = this
+                .addresses
+                .stream()
+                .filter(a -> a.getId().equals(addressId))
+                .findFirst();
+
+        if (!address.isPresent())
+            return false;
+
+        address.get().setRemoved(true);
+        return true;
     }
 
     public Boolean changeAddress(Address address) {
