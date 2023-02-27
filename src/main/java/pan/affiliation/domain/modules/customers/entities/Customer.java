@@ -15,7 +15,6 @@ import pan.affiliation.shared.validation.ValidatorFactory;
 import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class Customer extends AggregateRoot {
     private String name;
 
     public Customer(UUID id, String documentNumber, String name, List<Address> addresses) {
-        super.id = id;
+        super.setId(id);
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = new ArrayList<>(addresses);
@@ -69,7 +68,33 @@ public class Customer extends AggregateRoot {
     }
 
     public List<Address> getAddresses() {
-        return Collections.unmodifiableList(this.addresses);
+        return getAddresses(false);
+    }
+
+    @JsonIgnore
+    public List<Address> getRemovedAddresses() {
+        return this.getAddresses(true);
+    }
+
+    private List<Address> getAddresses(Boolean removed) {
+        return this.addresses
+                .stream()
+                .filter(a -> a.isRemoved().equals(removed))
+                .toList();
+    }
+
+    public Boolean removeAddress(UUID addressId) {
+        var address = this
+                .addresses
+                .stream()
+                .filter(a -> a.getId().equals(addressId))
+                .findFirst();
+
+        if (address.isEmpty())
+            return false;
+
+        address.get().setRemoved(true);
+        return true;
     }
 
     public Boolean changeAddress(Address address) {

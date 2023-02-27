@@ -1,5 +1,6 @@
 package pan.affiliation.api.controllers;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,16 @@ import java.util.UUID;
 public class CustomersController extends DefaultController {
     private final CreateCustomerUseCase createCustomerUseCase;
     private final GetCustomerByDocumentNumberUseCase getCustomerByDocumentNumberUseCase;
-    private final ChangeAddressUseCase changeAddressUseCase;
+    private final SaveAddressUseCase saveAddressUseCase;
+    private final RemoveAddressUseCase removeAddressUseCase;
 
     @Autowired
-    public CustomersController(ValidationContext context, CreateCustomerUseCase createCustomerUseCase, GetCustomerByDocumentNumberUseCase getCustomerByDocumentNumberUseCase, ChangeAddressUseCase changeAddressUseCase) {
+    public CustomersController(ValidationContext context, CreateCustomerUseCase createCustomerUseCase, GetCustomerByDocumentNumberUseCase getCustomerByDocumentNumberUseCase, SaveAddressUseCase saveAddressUseCase, RemoveAddressUseCase removeAddressUseCase) {
         super(context);
         this.createCustomerUseCase = createCustomerUseCase;
         this.getCustomerByDocumentNumberUseCase = getCustomerByDocumentNumberUseCase;
-        this.changeAddressUseCase = changeAddressUseCase;
+        this.saveAddressUseCase = saveAddressUseCase;
+        this.removeAddressUseCase = removeAddressUseCase;
     }
 
     @PostMapping
@@ -37,8 +40,21 @@ public class CustomersController extends DefaultController {
         return createGenericResponse(getCustomerByDocumentNumberUseCase.getCustomerByDocumentNumber(new DocumentNumber(documentNumber)));
     }
 
+    @Transactional
     @PutMapping("/{customerId}/addresses/{addressId}")
     public ResponseEntity<GenericResponse<Address>> getCustomerByDocumentNumber(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressInput address) {
-        return createGenericResponse(this.changeAddressUseCase.changeAddress(new ChangeAddressInput(customerId, addressId, address)));
+        return createGenericResponse(this.saveAddressUseCase.saveAddress(new SaveAddressInput(customerId, addressId, address)));
+    }
+
+    @Transactional
+    @PostMapping("/{customerId}/addresses")
+    public ResponseEntity<GenericResponse<Address>> createAddress(@PathVariable UUID customerId, @RequestBody AddressInput address) {
+        return createGenericResponse(this.saveAddressUseCase.saveAddress(new SaveAddressInput(customerId, null, address)));
+    }
+
+    @Transactional
+    @DeleteMapping("/{customerId}/addresses/{addressId}")
+    public ResponseEntity<GenericResponse<Customer>> removeAddress(@PathVariable UUID customerId, @PathVariable UUID addressId) {
+        return createGenericResponse(this.removeAddressUseCase.removeAddress(new RemoveAddressInput(customerId, addressId)));
     }
 }

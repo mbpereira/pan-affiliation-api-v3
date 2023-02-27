@@ -18,24 +18,24 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ChangeAddressUseCaseTest {
+public class SaveAddressUseCaseTest {
     private final ChangeCustomerCommandHandler command;
     private final ValidationContext validationContext;
     private final GetCustomerByIdQueryHandler query;
     private final Faker faker = new Faker();
 
-    public ChangeAddressUseCaseTest() {
+    public SaveAddressUseCaseTest() {
         this.query = Mockito.mock(GetCustomerByIdQueryHandler.class);
         this.validationContext = new ValidationContextImpl();
         this.command = Mockito.mock(ChangeCustomerCommandHandler.class);
     }
 
     @Test
-    public void changeAddress_shouldReturnNullIfCustomerDoesNotExists() {
-        var changeAddressInput = new ChangeAddressInput(UUID.randomUUID(), UUID.randomUUID(), getValidAddressInput());
+    public void saveAddress_shouldReturnNullIfCustomerDoesNotExists() {
+        var saveAddressInput = new SaveAddressInput(UUID.randomUUID(), UUID.randomUUID(), getValidAddressInput());
         var useCase = getUseCase();
 
-        var result = useCase.changeAddress(changeAddressInput);
+        var result = useCase.saveAddress(saveAddressInput);
 
         assertNull(result);
         assertEquals(ValidationStatus.NOT_FOUND, this.validationContext.getValidationStatus());
@@ -44,12 +44,12 @@ public class ChangeAddressUseCaseTest {
 
     @SneakyThrows
     @Test
-    public void changeAddress_shouldReturnNullIfAddressNotExists() {
-        var changeAddressInput = new ChangeAddressInput(UUID.randomUUID(), UUID.randomUUID(), getValidAddressInput());
+    public void saveAddress_shouldReturnNullIfAddressNotExists() {
+        var saveAddressInput = new SaveAddressInput(UUID.randomUUID(), UUID.randomUUID(), getValidAddressInput());
         Mockito.when(this.query.getCustomerById(Mockito.any())).thenReturn(new Customer(UUID.randomUUID(), "00000000000", "Mateus", new ArrayList<>()));
         var useCase = getUseCase();
 
-        var result = useCase.changeAddress(changeAddressInput);
+        var result = useCase.saveAddress(saveAddressInput);
 
         assertNull(result);
         assertEquals(ValidationStatus.NOT_FOUND, this.validationContext.getValidationStatus());
@@ -58,12 +58,12 @@ public class ChangeAddressUseCaseTest {
 
     @SneakyThrows
     @Test
-    public void changeAddress_shouldReturnNullIfNewAddressIsNotValid() {
+    public void saveAddress_shouldReturnNullIfNewAddressIsNotValid() {
         var addressId = UUID.randomUUID();
         var customerId = UUID.randomUUID();
         var addressInput = getInvalidAddressInput();
-        var changeAddressInput = new ChangeAddressInput(customerId, addressId, addressInput);
-        var address = changeAddressInput.toDomainEntity();
+        var saveAddressInput = new SaveAddressInput(customerId, addressId, addressInput);
+        var address = saveAddressInput.toDomainEntity();
         var addresses = new ArrayList<Address>();
         addresses.add(address);
         Mockito.when(this.query.getCustomerById(Mockito.any()))
@@ -75,7 +75,7 @@ public class ChangeAddressUseCaseTest {
                 ));
         var useCase = getUseCase();
 
-        var result = useCase.changeAddress(changeAddressInput);
+        var result = useCase.saveAddress(saveAddressInput);
 
         assertNull(result);
         assertTrue(this.validationContext.hasErrors());
@@ -84,17 +84,17 @@ public class ChangeAddressUseCaseTest {
 
     @SneakyThrows
     @Test
-    public void changeAddress_shouldReturnNullIfCommandExceptionIsRaised() {
+    public void saveAddress_shouldReturnNullIfCommandExceptionIsRaised() {
         var addressId = UUID.randomUUID();
         var customerId = UUID.randomUUID();
         var addressInput = getValidAddressInput();
-        var changeAddressInput = new ChangeAddressInput(customerId, addressId, addressInput);
+        var saveAddressInput = new SaveAddressInput(customerId, addressId, addressInput);
         var queryException = new QueryException("error", "message");
         Mockito.when(this.query.getCustomerById(Mockito.any()))
                 .thenThrow(queryException);
         var useCase = getUseCase();
 
-        var result = useCase.changeAddress(changeAddressInput);
+        var result = useCase.saveAddress(saveAddressInput);
 
         assertNull(result);
         assertEquals(ValidationStatus.INTEGRATION_ERROR, this.validationContext.getValidationStatus());
@@ -102,26 +102,53 @@ public class ChangeAddressUseCaseTest {
 
     @SneakyThrows
     @Test
-    public void changeAddress_shouldReturnChangedData() {
+    public void saveAddress_shouldReturnChangedData() {
         var addressId = UUID.randomUUID();
         var customerId = UUID.randomUUID();
         var addressInput = getValidAddressInput();
-        var changeAddressInput = new ChangeAddressInput(customerId, addressId, addressInput);
-        var address = changeAddressInput.toDomainEntity();
+        var saveAddressInput = new SaveAddressInput(customerId, addressId, addressInput);
+        var address = saveAddressInput.toDomainEntity();
         var addresses = new ArrayList<Address>();
         addresses.add(address);
+        var customer = new Customer(
+                customerId,
+                "658.524.250-52",
+                "Mateus",
+                addresses
+        );
         Mockito.when(this.query.getCustomerById(Mockito.any()))
-                .thenReturn(new Customer(
-                        customerId,
-                        "658.524.250-52",
-                        "Mateus",
-                        addresses
-                ));
+                .thenReturn(customer);
+        Mockito.when(this.command.changeCustomer(Mockito.any()))
+                .thenReturn(customer);
         var useCase = getUseCase();
 
-        var result = useCase.changeAddress(changeAddressInput);
+        var result = useCase.saveAddress(saveAddressInput);
 
         assertEquals(addressId, result.getId());
+    }
+
+    @SneakyThrows
+    @Test
+    public void saveAddress_shouldCreateNewAddressToMerchantWhenAddressIdIsNull() {
+        var customerId = UUID.randomUUID();
+        var addressInput = getValidAddressInput();
+        var saveAddressInput = new SaveAddressInput(customerId, null, addressInput);
+        var customer = new Customer(
+                customerId,
+                "658.524.250-52",
+                "Mateus",
+                new ArrayList<>()
+        );
+        Mockito.when(this.query.getCustomerById(Mockito.any()))
+                .thenReturn(customer);
+        Mockito.when(this.command.changeCustomer(Mockito.any()))
+                .thenReturn(customer);
+        var useCase = getUseCase();
+
+        var result = useCase.saveAddress(saveAddressInput);
+
+        assertNotNull(result.getId());
+        assertTrue(customer.getAddresses().size() > 0);
     }
 
     private AddressInput getValidAddressInput() {
@@ -148,7 +175,7 @@ public class ChangeAddressUseCaseTest {
                 "");
     }
 
-    private ChangeAddressUseCase getUseCase() {
-        return new ChangeAddressUseCase(this.command, this.validationContext, this.query);
+    private SaveAddressUseCase getUseCase() {
+        return new SaveAddressUseCase(this.command, this.validationContext, this.query);
     }
 }

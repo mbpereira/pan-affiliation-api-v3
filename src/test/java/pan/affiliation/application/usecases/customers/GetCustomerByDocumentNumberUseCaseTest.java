@@ -11,6 +11,7 @@ import pan.affiliation.shared.validation.ValidationContext;
 import pan.affiliation.shared.validation.ValidationContextImpl;
 import pan.affiliation.shared.validation.ValidationStatus;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +71,7 @@ public class GetCustomerByDocumentNumberUseCaseTest {
                         id,
                         documentNumber.getValue(),
                         "Mateus",
-                        null
+                        new ArrayList<>()
                 ));
         var result = useCase.getCustomerByDocumentNumber(documentNumber);
 

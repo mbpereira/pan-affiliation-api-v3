@@ -5,13 +5,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import pan.affiliation.domain.modules.customers.commands.ChangeCustomerCommandHandler;
 import pan.affiliation.domain.modules.customers.commands.CreateCustomerCommandHandler;
+import pan.affiliation.domain.modules.customers.entities.Customer;
 import pan.affiliation.domain.modules.customers.queries.GetCustomerByDocumentNumberQueryHandler;
 import pan.affiliation.domain.modules.customers.queries.GetCustomerByIdQueryHandler;
 import pan.affiliation.domain.modules.customers.valueobjects.DocumentNumber;
+import pan.affiliation.domain.shared.BaseEntitiy;
 import pan.affiliation.infrastructure.persistence.entities.CustomerDataModel;
 import pan.affiliation.shared.exceptions.CommandException;
 import pan.affiliation.shared.exceptions.QueryException;
-import pan.affiliation.domain.modules.customers.entities.Customer;
 import pan.affiliation.shared.validation.ValidationStatus;
 
 import java.util.UUID;
@@ -23,18 +24,20 @@ public class CustomersRepositoryImpl implements
         CreateCustomerCommandHandler,
         ChangeCustomerCommandHandler,
         GetCustomerByIdQueryHandler {
-    private final CustomerRepository repository;
+    private final CustomersRepository customersRepository;
+    private final AddressesRepository addressesRepository;
 
     @Autowired
-    public CustomersRepositoryImpl(CustomerRepository repository) {
-        this.repository = repository;
+    public CustomersRepositoryImpl(CustomersRepository customersRepository, AddressesRepository addressesRepository) {
+        this.customersRepository = customersRepository;
+        this.addressesRepository = addressesRepository;
     }
 
     @Override
     public Customer createCustomer(Customer customer) throws CommandException {
         try {
             var customerDataModel = CustomerDataModel.fromDomainEntity(customer);
-            this.repository.save(customerDataModel);
+            this.customersRepository.save(customerDataModel);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
             throw new CommandException(
@@ -46,7 +49,7 @@ public class CustomersRepositoryImpl implements
     @Override
     public Customer getCustomerByDocumentNumber(DocumentNumber documentNumber) throws QueryException {
         try {
-            var customer = this.repository.findByDocumentNumber(documentNumber.getValue());
+            var customer = this.customersRepository.findByDocumentNumber(documentNumber.getValue());
 
             if (customer == null)
                 return null;
@@ -62,9 +65,13 @@ public class CustomersRepositoryImpl implements
     @Override
     public Customer changeCustomer(Customer customer) throws CommandException {
         try {
+            var addressesToRemove = customer
+                    .getRemovedAddresses()
+                    .stream()
+                    .map(BaseEntitiy::getId).toList();
             var customerDataModel = CustomerDataModel.fromDomainEntity(customer);
-
-            this.repository.save(customerDataModel);
+            this.customersRepository.save(customerDataModel);
+            this.addressesRepository.deleteAllById(addressesToRemove);
             return customerDataModel.toDomainEntity();
         } catch (Exception ex) {
             throw new CommandException(
@@ -76,7 +83,7 @@ public class CustomersRepositoryImpl implements
     @Override
     public Customer getCustomerById(UUID id) throws QueryException {
         try {
-            var customer = this.repository.findById(id);
+            var customer = this.customersRepository.findById(id);
 
             return customer.map(CustomerDataModel::toDomainEntity).orElse(null);
         } catch (Exception ex) {

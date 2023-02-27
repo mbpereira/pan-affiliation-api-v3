@@ -4,7 +4,7 @@ import pan.affiliation.domain.modules.customers.entities.Address;
 
 import java.util.UUID;
 
-public record ChangeAddressInput(UUID customerId, UUID addressId, AddressInput address) {
+public record SaveAddressInput(UUID customerId, UUID addressId, AddressInput address) {
     public Address toDomainEntity() {
         return new Address(
                 this.addressId,

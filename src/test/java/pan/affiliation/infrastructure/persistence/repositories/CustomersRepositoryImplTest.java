@@ -1,8 +1,10 @@
 package pan.affiliation.infrastructure.persistence.repositories;
 
+import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import pan.affiliation.domain.modules.customers.entities.Address;
 import pan.affiliation.domain.modules.customers.entities.Customer;
 import pan.affiliation.domain.modules.customers.valueobjects.DocumentNumber;
 import pan.affiliation.infrastructure.persistence.entities.CustomerDataModel;
@@ -18,10 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 public class CustomersRepositoryImplTest {
-    private final CustomerRepository repository;
-
+    private final CustomersRepository repository;
+    private final AddressesRepository addressesRepository;
+    private final Faker faker = new Faker();
     public CustomersRepositoryImplTest() {
-        this.repository = Mockito.mock(CustomerRepository.class);
+
+        this.repository = Mockito.mock(CustomersRepository.class);
+        this.addressesRepository = Mockito.mock(AddressesRepository.class);
     }
 
     @Test
@@ -29,7 +34,7 @@ public class CustomersRepositoryImplTest {
         var repositoryImpl = getRepositoryImpl();
 
         var ex = assertThrows(CommandException.class,
-                () -> repositoryImpl.createCustomer(new Customer(null, "00000000000", "Mateus", null)));
+                () -> repositoryImpl.createCustomer(null));
 
         assertEquals(ValidationStatus.INTEGRATION_ERROR.toString(), ex.getErrorCode());
     }
@@ -149,7 +154,7 @@ public class CustomersRepositoryImplTest {
         var repositoryImpl = getRepositoryImpl();
 
         var ex = assertThrows(CommandException.class,
-                () -> repositoryImpl.changeCustomer(new Customer(UUID.randomUUID(), "00000000000", "Mateus", null)));
+                () -> repositoryImpl.changeCustomer(null));
 
         assertEquals(ValidationStatus.INTEGRATION_ERROR.toString(), ex.getErrorCode());
     }
@@ -158,7 +163,17 @@ public class CustomersRepositoryImplTest {
     @Test
     public void changeCustomer_shouldReturnsChangedCustomerData() {
         var repositoryImpl = getRepositoryImpl();
-        var customer = new Customer("00000000000", "Mateus");
+        var addresses = new ArrayList<Address>();
+        addresses.add(getAddress());
+        addresses.add(getAddress());
+        addresses.add(getAddress());
+        addresses.add(getAddress());
+        addresses.get(0).setRemoved(true);
+        var customer = new Customer(
+                UUID.randomUUID(),
+                "00000000000",
+                "Mateus",
+                addresses);
         var generatedId = customer.getId();
         var documentNumber = customer.getDocumentNumber();
 
@@ -166,9 +181,22 @@ public class CustomersRepositoryImplTest {
 
         assertEquals(generatedId, changedCustomer.getId());
         assertEquals(documentNumber, changedCustomer.getDocumentNumber());
+        assertEquals(3, changedCustomer.getAddresses().size());
+    }
+
+    private Address getAddress() {
+        return new Address(
+                "78085630",
+                this.faker.address().streetAddress(),
+                this.faker.random().nextInt(0, 10),
+                this.faker.address().city(),
+                this.faker.address().stateAbbr(),
+                this.faker.address().country(),
+                this.faker.address().secondaryAddress(),
+                this.faker.lorem().word());
     }
 
     private CustomersRepositoryImpl getRepositoryImpl() {
-        return new CustomersRepositoryImpl(this.repository);
+        return new CustomersRepositoryImpl(this.repository, this.addressesRepository);
     }
 }
