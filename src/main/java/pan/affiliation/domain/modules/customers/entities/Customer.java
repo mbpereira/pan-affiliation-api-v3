@@ -35,7 +35,7 @@ public class Customer extends AggregateRoot {
     private String name;
 
     public Customer(UUID id, String documentNumber, String name, List<Address> addresses) {
-        super.id = id;
+        super.setId(id);
         this.documentNumber = new DocumentNumber(documentNumber);
         this.name = name;
         this.addresses = new ArrayList<>(addresses);

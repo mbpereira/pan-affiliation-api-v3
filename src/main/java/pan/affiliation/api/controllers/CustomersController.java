@@ -17,14 +17,14 @@ import java.util.UUID;
 public class CustomersController extends DefaultController {
     private final CreateCustomerUseCase createCustomerUseCase;
     private final GetCustomerByDocumentNumberUseCase getCustomerByDocumentNumberUseCase;
-    private final ChangeAddressUseCase changeAddressUseCase;
+    private final SaveAddressUseCase saveAddressUseCase;
 
     @Autowired
-    public CustomersController(ValidationContext context, CreateCustomerUseCase createCustomerUseCase, GetCustomerByDocumentNumberUseCase getCustomerByDocumentNumberUseCase, ChangeAddressUseCase changeAddressUseCase) {
+    public CustomersController(ValidationContext context, CreateCustomerUseCase createCustomerUseCase, GetCustomerByDocumentNumberUseCase getCustomerByDocumentNumberUseCase, SaveAddressUseCase saveAddressUseCase) {
         super(context);
         this.createCustomerUseCase = createCustomerUseCase;
         this.getCustomerByDocumentNumberUseCase = getCustomerByDocumentNumberUseCase;
-        this.changeAddressUseCase = changeAddressUseCase;
+        this.saveAddressUseCase = saveAddressUseCase;
     }
 
     @PostMapping
@@ -39,6 +39,6 @@ public class CustomersController extends DefaultController {
 
     @PutMapping("/{customerId}/addresses/{addressId}")
     public ResponseEntity<GenericResponse<Address>> getCustomerByDocumentNumber(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressInput address) {
-        return createGenericResponse(this.changeAddressUseCase.changeAddress(new ChangeAddressInput(customerId, addressId, address)));
+        return createGenericResponse(this.saveAddressUseCase.saveAddress(new SaveAddressInput(customerId, addressId, address)));
     }
 }

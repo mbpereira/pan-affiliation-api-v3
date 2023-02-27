@@ -50,7 +50,7 @@ public class Address extends BaseEntitiy {
     private String neighborhood;
 
     public Address(UUID id, String postalCode, String street, int number, String city, String state, String country, String complement, String neighborhood) {
-        super.id = id;
+        super.setId(id);
         this.postalCode = new PostalCode(postalCode);
         this.street = street;
         this.number = number;

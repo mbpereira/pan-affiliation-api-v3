@@ -29,7 +29,7 @@ public class CustomersRepositoryImplTest {
         var repositoryImpl = getRepositoryImpl();
 
         var ex = assertThrows(CommandException.class,
-                () -> repositoryImpl.createCustomer(new Customer(null, "00000000000", "Mateus", null)));
+                () -> repositoryImpl.createCustomer(null));
 
         assertEquals(ValidationStatus.INTEGRATION_ERROR.toString(), ex.getErrorCode());
     }
@@ -149,7 +149,7 @@ public class CustomersRepositoryImplTest {
         var repositoryImpl = getRepositoryImpl();
 
         var ex = assertThrows(CommandException.class,
-                () -> repositoryImpl.changeCustomer(new Customer(UUID.randomUUID(), "00000000000", "Mateus", null)));
+                () -> repositoryImpl.changeCustomer(null));
 
         assertEquals(ValidationStatus.INTEGRATION_ERROR.toString(), ex.getErrorCode());
     }
