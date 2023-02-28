@@ -58,7 +58,7 @@ public class SaveAddressUseCase extends ChangeCustomerBaseUseCase {
         var addressChanged = customer.changeAddress(newAddressData);
 
         if(!addressChanged) {
-            logger.warn("Invalid address data provided");
+            logger.warn("Address identified by {} not found", newAddressData.getId());
             this.validationContext.setStatus(ValidationStatus.NOT_FOUND);
             this.validationContext.addNotification(
                     "address",
