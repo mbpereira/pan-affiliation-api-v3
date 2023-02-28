@@ -38,7 +38,7 @@ jobs:
               echo REDIS_HOST=$REDIS_HOST >> ~/.secrets/$DOCKER_IMG_NAME/.env              
               echo REDIS_PORT=$REDIS_PORT >> ~/.secrets/$DOCKER_IMG_NAME/.env              
               echo REDIS_DATABASE=$REDIS_DATABASE >> ~/.secrets/$DOCKER_IMG_NAME/.env              
-              docker ps -a -q --filter name=$DOCKER_IMG_NAME | grep -q . && docker stop $DOCKER_IMG_NAME && docker rm -f $DOCKER_IMG_NAME || echo Skipped && docker rmi -f $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME && docker run -p $API_PORT:80 -d --name $DOCKER_IMG_NAME --env-file ~/.secrets/$DOCKER_IMG_NAME/.env $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME
+              docker ps -a -q --filter name=$DOCKER_IMG_NAME | grep -q . && docker stop $DOCKER_IMG_NAME && docker rm -f $DOCKER_IMG_NAME || echo Skipped && docker rmi -f $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME && docker run -p $API_PORT:8080 -d --name $DOCKER_IMG_NAME --env-file ~/.secrets/$DOCKER_IMG_NAME/.env $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME
             '"
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
