@@ -8,23 +8,36 @@ import pan.affiliation.domain.modules.localization.queries.GetPostalCodeInformat
 import pan.affiliation.infrastructure.gateways.viacep.contracts.PostalCodeInformationResponse;
 import pan.affiliation.infrastructure.shared.http.abstractions.HttpService;
 import pan.affiliation.infrastructure.shared.http.abstractions.HttpServiceFactory;
+import pan.affiliation.shared.caching.CacheProvider;
 import pan.affiliation.shared.environment.PropertiesReader;
 import pan.affiliation.shared.exceptions.QueryException;
 
 @Component
 public class ViaCepGatewayService implements GetPostalCodeInformationQueryHandler {
-    private static final String GET_POSTACODE_INFORMATION_PATH = "ws/%s/json";
     private final HttpService http;
+    private final CacheProvider cacheProvider;
 
     @Autowired
-    public ViaCepGatewayService(HttpServiceFactory factory, PropertiesReader propertiesReader) {
+    public ViaCepGatewayService(HttpServiceFactory factory, PropertiesReader propertiesReader, CacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
         this.http = factory.create(propertiesReader.get("viacep.baseurl"));
     }
 
     @Override
     public PostalCodeInformation getPostalCodeInformation(PostalCode postalCode) throws QueryException {
-        var requestUrl = String.format(GET_POSTACODE_INFORMATION_PATH, postalCode.getValue());
-        var information = this.http.get(requestUrl, PostalCodeInformationResponse.class);
+        var cacheKey = String.format("postalcode_%s", postalCode.getValue());
+        var cachedValue = this.cacheProvider.get(cacheKey, PostalCodeInformationResponse.class);
+
+        PostalCodeInformationResponse information;
+
+        if (cachedValue.isPresent()) {
+            information = cachedValue.get();
+        } else {
+            var requestUrl = String.format("ws/%s/json", postalCode.getValue());
+            var response = this.http.get(requestUrl, PostalCodeInformationResponse.class);
+            this.cacheProvider.set(cacheKey, response);
+            information = response;
+        }
 
         return new PostalCodeInformation(
                 information.getPostalCode(),
