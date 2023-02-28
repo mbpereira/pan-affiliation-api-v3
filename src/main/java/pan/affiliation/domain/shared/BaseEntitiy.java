@@ -8,9 +8,18 @@ import java.util.UUID;
 @Getter
 public abstract class BaseEntitiy {
     @NotNull
-    protected UUID id;
+    private UUID id;
 
     public void generateId() {
         this.id = UUID.randomUUID();
+    }
+
+    protected void setId(UUID id) {
+        if (id == null) {
+            this.generateId();
+            return;
+        }
+
+        this.id = id;
     }
 }

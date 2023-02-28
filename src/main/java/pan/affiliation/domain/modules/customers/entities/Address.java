@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pan.affiliation.domain.modules.customers.valueobjects.PostalCode;
 import pan.affiliation.domain.shared.BaseEntitiy;
-import pan.affiliation.shared.validation.jakarta.annotations.ValidVo;
+import pan.affiliation.domain.modules.customers.validation.jakarta.annotations.ValidVo;
 
 import java.util.UUID;
 
@@ -49,8 +49,11 @@ public class Address extends BaseEntitiy {
     @NotBlank
     private String neighborhood;
 
+    @JsonIgnore
+    private Boolean removed;
+
     public Address(UUID id, String postalCode, String street, int number, String city, String state, String country, String complement, String neighborhood) {
-        super.id = id;
+        super.setId(id);
         this.postalCode = new PostalCode(postalCode);
         this.street = street;
         this.number = number;
@@ -59,6 +62,7 @@ public class Address extends BaseEntitiy {
         this.country = country;
         this.complement = complement;
         this.neighborhood = neighborhood;
+        this.removed = false;
     }
 
     public Address(String postalCode, String street, int number, String city, String state, String country, String complement, String neighborhood) {
@@ -71,6 +75,7 @@ public class Address extends BaseEntitiy {
         this.country = country;
         this.complement = complement;
         this.neighborhood = neighborhood;
+        this.removed = false;
     }
 
     @JsonGetter("postalCode")
@@ -81,5 +86,13 @@ public class Address extends BaseEntitiy {
     @JsonSetter("postalCode")
     public void setPostalCode(String postalCode) {
         this.postalCode = new PostalCode(postalCode);
+    }
+
+    public void setRemoved(Boolean removed) {
+        this.removed = removed;
+    }
+
+    public Boolean isRemoved() {
+        return this.removed;
     }
 }

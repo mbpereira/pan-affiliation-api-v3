@@ -1,8 +1,7 @@
-package pan.affiliation.application.usecases;
+package pan.affiliation.application.usecases.localization;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import pan.affiliation.application.usecases.localization.GetCountryStatesUseCase;
 import pan.affiliation.domain.modules.localization.entities.State;
 import pan.affiliation.domain.modules.localization.queries.GetCountryStatesQueryHandler;
 import pan.affiliation.shared.exceptions.QueryException;

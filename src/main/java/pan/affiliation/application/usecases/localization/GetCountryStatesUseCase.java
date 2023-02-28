@@ -1,5 +1,7 @@
 package pan.affiliation.application.usecases.localization;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pan.affiliation.domain.modules.localization.entities.State;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class GetCountryStatesUseCase {
+    private final static Logger logger = LoggerFactory.getLogger(GetCountryStatesUseCase.class);
     private final GetCountryStatesQueryHandler query;
     private final ValidationContext validationContext;
 
@@ -24,10 +27,13 @@ public class GetCountryStatesUseCase {
     }
 
     public List<State> getCountryStates() {
+        logger.info("Getting states");
+
         try {
             var states = this.query.getCountryStates();
             return this.sort(states);
         } catch (QueryException e) {
+            logger.error("get states failed", e);
             this.validationContext.setStatus(ValidationStatus.INTEGRATION_ERROR);
             this.validationContext.addNotification(e.getErrorCode(), e.getMessage());
         }
@@ -52,9 +58,6 @@ public class GetCountryStatesUseCase {
     }
 
     private List<String> getPriorityStates() {
-        var priorityStates = new ArrayList<String>();
-        priorityStates.add("SP");
-        priorityStates.add("RJ");
-        return priorityStates;
+        return List.of("SP", "RJ");
     }
 }

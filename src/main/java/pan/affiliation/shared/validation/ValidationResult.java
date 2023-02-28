@@ -2,20 +2,20 @@ package pan.affiliation.shared.validation;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
 public class ValidationResult {
-    private List<Error> errors;
+    private final List<Error> errors;
 
     public ValidationResult(List<Error> errors) {
         this.errors = Collections.unmodifiableList(errors);
     }
 
-    public ValidationResult() {
-        this.errors = new ArrayList<>();
+    @Override
+    public String toString() {
+        return String.join(", ", this.errors.stream().map(Error::message).toList());
     }
 
     public Boolean isValid() {
