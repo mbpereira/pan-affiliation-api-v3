@@ -32,7 +32,7 @@ public class Address extends BaseEntitiy {
     private String city;
     @Getter
     @Setter
-    @Size(max = 2)
+    @Size(min = 2, max = 2)
     @NotBlank
     private String state;
     @Getter
