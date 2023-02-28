@@ -1,0 +1,70 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+orbs:
+  docker: circleci/docker@2.2.0
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
+  test:
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    # Be sure to update the tag on this image to a more stable version, using latest can result in unstable builds.
+    docker:
+      - image: openjdk:19
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+      - run: ./mvnw clean test
+      - store_test_results:
+          path: ~/project/target/surefire-reports
+  deploy-staging:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    steps:
+      - run:
+          name: Deploy to VPS
+          command: |
+            ssh $SSH_USER@$SSH_HOST "bash -c '
+              mkdir -p ~/.secrets/$DOCKER_IMG_NAME 2> /dev/null
+              echo IBGE_BASE_URL=$IBGE_BASE_URL >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo VIACEP_BASE_URL=$VIACEP_BASE_URL >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo PAN_DB_HOST=$PAN_DB_HOST >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo PAN_DB_NAME=$PAN_DB_NAME >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo PAN_DB_USERNAME=$PAN_DB_USERNAME >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo PAN_DB_PASSWORD=$PAN_DB_PASSWORD >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo REDIS_HOST=$REDIS_HOST >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo REDIS_PORT=$REDIS_PORT >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              echo REDIS_DATABASE=$REDIS_DATABASE >> ~/.secrets/$DOCKER_IMG_NAME/.env              
+              docker ps -a -q --filter name=$DOCKER_IMG_NAME | grep -q . && docker stop $DOCKER_IMG_NAME && docker rm -f $DOCKER_IMG_NAME || echo Skipped && docker rmi -f $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME && docker run -p $API_PORT:80 -d --name $DOCKER_IMG_NAME --env-file ~/.secrets/$DOCKER_IMG_NAME/.env $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME
+            '"
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - test
+      - docker/publish:
+          requires:
+            - test
+          context:
+            - PAN_AFFILIATION_API_V3_STG
+          deploy: true
+          image: $DOCKER_HUB_USERNAME/$DOCKER_IMG_NAME
+          docker-password: DOCKER_HUB_PASSWORD
+          docker-username: DOCKER_HUB_USERNAME
+          lint-dockerfile: false
+          remote-docker-dlc: false
+          treat-warnings-as-errors: false
+          update-description: false
+          use-docker-credentials-store: false
+          use-remote-docker: false
+          tag: $CIRCLE_SHA1,latest
+      - deploy-staging:
+          context:
+            - PAN_AFFILIATION_API_V3_STG
+          requires:
+            - docker/publish
