@@ -3,6 +3,7 @@ package pan.affiliation.shared.caching.providers.redis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.api.StatefulRedisConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pan.affiliation.shared.caching.CacheProvider;
@@ -19,6 +20,7 @@ public class RedisCacheProvider implements CacheProvider {
     private final ObjectMapper mapper = new ObjectMapper().disable(FAIL_ON_UNKNOWN_PROPERTIES);
     private final StatefulRedisConnection<String, String> connection;
 
+    @Autowired
     public RedisCacheProvider(RedisConnectionFactory factory) {
         connection = factory.create();
     }

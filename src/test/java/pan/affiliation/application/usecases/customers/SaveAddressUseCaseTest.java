@@ -1,6 +1,5 @@
 package pan.affiliation.application.usecases.customers;
 
-import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,7 +21,6 @@ public class SaveAddressUseCaseTest {
     private final ChangeCustomerCommandHandler command;
     private final ValidationContext validationContext;
     private final GetCustomerByIdQueryHandler query;
-    private final Faker faker = new Faker();
 
     public SaveAddressUseCaseTest() {
         this.query = Mockito.mock(GetCustomerByIdQueryHandler.class);
@@ -154,13 +152,13 @@ public class SaveAddressUseCaseTest {
     private AddressInput getValidAddressInput() {
         return new AddressInput(
                 "78085630",
-                this.faker.address().streetAddress(),
-                this.faker.random().nextInt(0, 10),
-                this.faker.address().city(),
-                this.faker.address().stateAbbr(),
-                this.faker.address().country(),
-                this.faker.address().secondaryAddress(),
-                this.faker.lorem().word());
+                "Rua 15",
+                24,
+                "São Paulo",
+                "SP",
+                "Brasil",
+                "G 306",
+                "Centro");
     }
 
     private AddressInput getInvalidAddressInput() {

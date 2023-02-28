@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import pan.affiliation.infrastructure.gateways.ibge.contracts.CityResponse;
 import pan.affiliation.shared.caching.CacheProvider;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public class RedisCacheProviderTest {
     @Test
     public void getMany_shouldReturnEmptyListIfKeyDoesNotExists() {
         Mockito.when(this.commands.smembers(Mockito.any()))
-                .thenReturn(null);
+                .thenReturn(new HashSet<>());
         var provider = getCacheProvider();
 
         var result = provider.getMany("key", CityResponse.class);

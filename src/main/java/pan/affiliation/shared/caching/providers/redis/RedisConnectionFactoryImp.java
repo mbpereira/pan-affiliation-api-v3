@@ -2,6 +2,7 @@ package pan.affiliation.shared.caching.providers.redis;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pan.affiliation.shared.environment.PropertiesReader;
@@ -11,6 +12,7 @@ import pan.affiliation.shared.environment.PropertiesReader;
 public class RedisConnectionFactoryImp implements RedisConnectionFactory {
     private final PropertiesReader reader;
 
+    @Autowired
     public RedisConnectionFactoryImp(PropertiesReader reader) {
         this.reader = reader;
     }

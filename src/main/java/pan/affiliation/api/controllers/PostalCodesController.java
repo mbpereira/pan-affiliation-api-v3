@@ -1,5 +1,6 @@
 package pan.affiliation.api.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import pan.affiliation.shared.validation.ValidationContext;
 public class PostalCodesController extends DefaultController {
     private final GetPostalCodeInformationUseCase getPostalCodeInformationUseCase;
 
+    @Autowired
     public PostalCodesController(ValidationContext context, GetPostalCodeInformationUseCase getPostalCodeInformationUseCase) {
         super(context);
         this.getPostalCodeInformationUseCase = getPostalCodeInformationUseCase;
