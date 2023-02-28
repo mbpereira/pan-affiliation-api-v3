@@ -32,7 +32,7 @@ public class Address extends BaseEntitiy {
     private String city;
     @Getter
     @Setter
-    @Size(min = 2, max = 2)
+    @Size(max = 2, message = "Invalid state abbr. Valid examples.: MT, RS, SP")
     @NotBlank
     private String state;
     @Getter
