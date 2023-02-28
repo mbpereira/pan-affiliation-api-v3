@@ -23,7 +23,6 @@ public class RemoveAddressUseCase extends ChangeCustomerBaseUseCase {
         var customer = this.getCustomerById(input.customerId());
 
         if (customer == null) {
-            logger.warn("Customer identified by {} does not exists", input.customerId());
             return null;
         }
 
